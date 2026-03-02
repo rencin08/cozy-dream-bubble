@@ -7,14 +7,32 @@ const title = "welcome to cindy's home";
 
 const Sparkle = ({ delay, x, y }: { delay: number; x: number; y: number }) => (
   <motion.div
-    className="absolute w-[2px] h-[2px] rounded-full bg-foreground/25"
+    className="absolute w-[3px] h-[3px] rounded-full bg-primary/40"
     style={{ left: `${x}%`, top: `${y}%` }}
-    animate={{ opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
+    animate={{ opacity: [0, 1, 0.3, 1, 0], scale: [0, 1.2, 0.8, 1.5, 0] }}
     transition={{
-      duration: 2.5,
+      duration: 3,
       delay,
       repeat: Infinity,
-      repeatDelay: Math.random() * 4 + 2,
+      repeatDelay: Math.random() * 3 + 1,
+      ease: "easeInOut",
+    }}
+  />
+);
+
+const FloatingOrb = ({ delay, x, size }: { delay: number; x: number; size: number }) => (
+  <motion.div
+    className="absolute rounded-full bg-primary/[0.04]"
+    style={{ left: `${x}%`, width: size, height: size }}
+    animate={{
+      y: [0, -40, 0],
+      opacity: [0.3, 0.6, 0.3],
+      scale: [1, 1.1, 1],
+    }}
+    transition={{
+      duration: 8 + Math.random() * 4,
+      delay,
+      repeat: Infinity,
       ease: "easeInOut",
     }}
   />
@@ -68,18 +86,37 @@ const LandingPage = () => {
   const [entered, setEntered] = useState(false);
   const [titleDone, setTitleDone] = useState(false);
   const [sparkles] = useState(() =>
-    Array.from({ length: 18 }, (_, i) => ({
+    Array.from({ length: 25 }, (_, i) => ({
       id: i,
       x: 5 + Math.random() * 90,
-      y: 5 + Math.random() * 40,
-      delay: Math.random() * 6,
+      y: 5 + Math.random() * 50,
+      delay: Math.random() * 4,
+    }))
+  );
+  const [orbs] = useState(() =>
+    Array.from({ length: 6 }, (_, i) => ({
+      id: i,
+      x: 10 + Math.random() * 80,
+      size: 60 + Math.random() * 120,
+      delay: Math.random() * 5,
     }))
   );
 
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-hidden relative">
-      {/* NYC skyline — full width at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+      {/* Floating ambient orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        {orbs.map((o) => (
+          <FloatingOrb key={o.id} delay={o.delay} x={o.x} size={o.size} />
+        ))}
+      </div>
+
+      {/* NYC skyline — full width at bottom with gentle drift */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 pointer-events-none"
+        animate={{ x: [0, -8, 0, 8, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+      >
         <img
           src={nycSkyline}
           alt=""
@@ -88,7 +125,7 @@ const LandingPage = () => {
         {sparkles.map((s) => (
           <Sparkle key={s.id} delay={s.delay} x={s.x} y={s.y} />
         ))}
-      </div>
+      </motion.div>
 
       <AnimatePresence mode="wait">
         {!entered ? (
