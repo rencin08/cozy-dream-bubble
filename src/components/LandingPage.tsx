@@ -94,29 +94,27 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-hidden relative">
-      {/* NYC skyline — faint, upper portion like a window view */}
-      <div className="absolute top-0 left-0 right-0 h-[30%] pointer-events-none overflow-hidden">
+      {/* NYC skyline — dreamy backdrop across full page */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <img
           src={nycSkyline}
           alt=""
-          className="w-full h-full object-cover object-bottom opacity-[0.06]"
+          className="w-full h-[60%] object-cover object-bottom opacity-[0.12]"
         />
         {sparkles.map((s) => (
           <Sparkle key={s.id} delay={s.delay} x={s.x} y={s.y} />
         ))}
       </div>
 
-      {/* Faint ruled lines — notebook feel */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.06]">
-        {Array.from({ length: 30 }, (_, i) => (
+      {/* Very subtle notebook lines — just a few in the lower area */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.04]">
+        {Array.from({ length: 8 }, (_, i) => (
           <div
             key={i}
-            className="absolute left-0 right-0 h-[1px] bg-foreground"
-            style={{ top: `${120 + i * 32}px` }}
+            className="absolute left-[15%] right-[15%] h-[1px] bg-foreground"
+            style={{ top: `${55 + i * 4}%` }}
           />
         ))}
-        {/* Left margin line */}
-        <div className="absolute top-0 bottom-0 left-[60px] md:left-[120px] w-[1px] bg-destructive/40" />
       </div>
 
       <AnimatePresence mode="wait">
