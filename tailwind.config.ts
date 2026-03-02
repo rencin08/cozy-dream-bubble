@@ -57,6 +57,13 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        bubble: {
+          matcha: "hsl(var(--bubble-matcha))",
+          startup: "hsl(var(--bubble-startup))",
+          delusion: "hsl(var(--bubble-delusion))",
+          nyc: "hsl(var(--bubble-nyc))",
+          harvard: "hsl(var(--bubble-harvard))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
