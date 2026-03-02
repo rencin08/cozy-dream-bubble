@@ -4,11 +4,11 @@ import cindyAvatar from "@/assets/cindy-avatar.png";
 import nycSkyline from "@/assets/nyc-skyline.png";
 
 const thoughts = [
-  { label: "matcha", delay: 0.8, x: -45, y: -40 },
-  { label: "startup", delay: 1.0, x: 10, y: -58 },
-  { label: "delulu era", delay: 1.2, x: 55, y: -35 },
-  { label: "nyc", delay: 1.4, x: -20, y: -70 },
-  { label: "harvard", delay: 1.6, x: 40, y: -65 },
+  { label: "matcha", delay: 0.8, x: -60, y: -20 },
+  { label: "startup", delay: 1.0, x: 0, y: -38 },
+  { label: "delulu era", delay: 1.2, x: 58, y: -18 },
+  { label: "nyc", delay: 1.4, x: -25, y: -50 },
+  { label: "harvard", delay: 1.6, x: 35, y: -48 },
 ];
 
 const Sparkle = ({ delay, x, y }: { delay: number; x: number; y: number }) => (
@@ -89,14 +89,14 @@ const LandingPage = () => {
               {thoughts.map((t, i) => (
                 <motion.span
                   key={i}
-                  className="absolute text-foreground/50 text-[10px] md:text-xs font-body italic whitespace-nowrap z-10"
+                  className="absolute text-foreground/80 text-[11px] md:text-sm font-body italic whitespace-nowrap z-10 font-medium"
                   style={{
                     left: `calc(50% + ${t.x}px)`,
                     top: `${t.y}px`,
                   }}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{
-                    opacity: 0.6,
+                    opacity: 0.85,
                     y: [0, -3, 0],
                   }}
                   transition={{
