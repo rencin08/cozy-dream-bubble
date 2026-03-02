@@ -78,12 +78,12 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-hidden relative">
-      {/* NYC skyline — clean line art backdrop */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+      {/* NYC skyline — anchored to very bottom */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden h-[35%]">
         <img
           src={nycSkyline}
           alt=""
-          className="w-full opacity-[0.08]"
+          className="w-full absolute bottom-0 left-0 opacity-[0.1]"
         />
         {sparkles.map((s) => (
           <Sparkle key={s.id} delay={s.delay} x={s.x} y={s.y} />
