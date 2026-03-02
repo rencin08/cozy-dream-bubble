@@ -83,7 +83,7 @@ const LandingPage = () => {
         <img
           src={nycSkyline}
           alt=""
-          className="w-full absolute bottom-0 left-0 opacity-[0.1]"
+          className="w-full absolute bottom-0 left-0 opacity-[0.22]"
         />
         {sparkles.map((s) => (
           <Sparkle key={s.id} delay={s.delay} x={s.x} y={s.y} />
