@@ -99,7 +99,7 @@ const LandingPage = () => {
           >
             {/* Avatar — circle */}
             <motion.div
-              className="w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden border border-border mb-10"
+              className="w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden border-2 border-primary/30 mb-10 bg-card shadow-sm"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
@@ -107,7 +107,7 @@ const LandingPage = () => {
               <img
                 src={cindyAvatar}
                 alt="Cindy"
-                className="w-full h-full object-cover object-top scale-[1.3] sepia-[0.3]"
+                className="w-full h-full object-cover object-top scale-[1.3] sepia-[0.5] brightness-[0.95] contrast-[1.1]"
               />
             </motion.div>
 
