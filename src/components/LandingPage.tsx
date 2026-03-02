@@ -1,54 +1,122 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import cindyAvatar from "@/assets/cindy-avatar.png";
 import nycSkyline from "@/assets/nyc-skyline.png";
 
-const thoughts = [
-  { label: "matcha", delay: 0.8, x: -60, y: -20 },
-  { label: "startup", delay: 1.0, x: 0, y: -38 },
-  { label: "delulu era", delay: 1.2, x: 58, y: -18 },
-  { label: "nyc", delay: 1.4, x: -25, y: -50 },
-  { label: "harvard", delay: 1.6, x: 35, y: -48 },
+const title = "welcome to cindy's home";
+const journalLines = [
+  "mar 2, 2026 — couldn't sleep again",
+  "been thinking about that startup idea...",
+  "nyc looks so pretty from my window rn",
+  "maybe i should make some matcha ☁",
 ];
 
 const Sparkle = ({ delay, x, y }: { delay: number; x: number; y: number }) => (
   <motion.div
-    className="absolute w-[2px] h-[2px] rounded-full bg-foreground/30"
+    className="absolute w-[2px] h-[2px] rounded-full bg-accent/50"
     style={{ left: `${x}%`, top: `${y}%` }}
-    animate={{ opacity: [0, 0.7, 0], scale: [0, 1.5, 0] }}
+    animate={{ opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
     transition={{
-      duration: 2,
+      duration: 2.5,
       delay,
       repeat: Infinity,
-      repeatDelay: Math.random() * 3 + 2,
+      repeatDelay: Math.random() * 4 + 2,
       ease: "easeInOut",
     }}
   />
 );
 
+const TypewriterText = ({
+  text,
+  delay = 0,
+  className = "",
+  onComplete,
+}: {
+  text: string;
+  delay?: number;
+  className?: string;
+  onComplete?: () => void;
+}) => {
+  const [displayed, setDisplayed] = useState("");
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setStarted(true), delay * 1000);
+    return () => clearTimeout(timeout);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!started) return;
+    if (displayed.length < text.length) {
+      const timer = setTimeout(
+        () => setDisplayed(text.slice(0, displayed.length + 1)),
+        60 + Math.random() * 40
+      );
+      return () => clearTimeout(timer);
+    } else {
+      onComplete?.();
+    }
+  }, [displayed, started, text, onComplete]);
+
+  return (
+    <span className={className}>
+      {displayed}
+      {started && displayed.length < text.length && (
+        <motion.span
+          className="inline-block w-[2px] h-[1em] bg-foreground/60 ml-[1px] align-middle"
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }}
+        />
+      )}
+    </span>
+  );
+};
+
 const LandingPage = () => {
   const [entered, setEntered] = useState(false);
+  const [titleDone, setTitleDone] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const [sparkles] = useState(() =>
-    Array.from({ length: 20 }, (_, i) => ({
+    Array.from({ length: 15 }, (_, i) => ({
       id: i,
-      x: 10 + Math.random() * 80,
-      y: 10 + Math.random() * 60,
-      delay: Math.random() * 5,
+      x: 5 + Math.random() * 90,
+      y: 5 + Math.random() * 25,
+      delay: Math.random() * 6,
     }))
   );
 
+  useEffect(() => {
+    if (titleDone) {
+      const t = setTimeout(() => setShowButton(true), 2800);
+      return () => clearTimeout(t);
+    }
+  }, [titleDone]);
+
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-hidden relative">
-      {/* NYC skyline backdrop — faint pencil drawing */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* NYC skyline — faint, upper portion like a window view */}
+      <div className="absolute top-0 left-0 right-0 h-[30%] pointer-events-none overflow-hidden">
         <img
           src={nycSkyline}
           alt=""
-          className="w-full h-full object-cover object-center opacity-[0.07]"
+          className="w-full h-full object-cover object-bottom opacity-[0.06]"
         />
         {sparkles.map((s) => (
           <Sparkle key={s.id} delay={s.delay} x={s.x} y={s.y} />
         ))}
+      </div>
+
+      {/* Faint ruled lines — notebook feel */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.06]">
+        {Array.from({ length: 30 }, (_, i) => (
+          <div
+            key={i}
+            className="absolute left-0 right-0 h-[1px] bg-foreground"
+            style={{ top: `${120 + i * 32}px` }}
+          />
+        ))}
+        {/* Left margin line */}
+        <div className="absolute top-0 bottom-0 left-[60px] md:left-[120px] w-[1px] bg-destructive/40" />
       </div>
 
       <AnimatePresence mode="wait">
@@ -56,107 +124,67 @@ const LandingPage = () => {
           <motion.div
             key="welcome"
             className="flex-1 flex flex-col items-center justify-center relative z-10 px-6"
-            exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.4 } }}
+            exit={{ opacity: 0, y: -20, transition: { duration: 0.5 } }}
           >
-            {/* Welcome text */}
-            <motion.h1
-              className="text-3xl md:text-5xl font-display text-foreground text-center italic mb-10"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              welcome to cindy's home
-            </motion.h1>
+            {/* Journal page content */}
+            <div className="max-w-md w-full flex flex-col items-center">
+              {/* Title — typewriter */}
+              <h1 className="text-3xl md:text-5xl font-handwriting text-foreground text-center mb-8 min-h-[3rem]">
+                <TypewriterText
+                  text={title}
+                  delay={0.5}
+                  onComplete={() => setTitleDone(true)}
+                />
+              </h1>
 
-            {/* Circle avatar with thought cloud */}
-            <div className="relative mb-10">
-              {/* Thought cloud — wispy background */}
+              {/* Avatar — circle */}
               <motion.div
-                className="absolute rounded-full bg-foreground/[0.03] blur-lg z-0"
-                style={{
-                  left: "50%",
-                  top: "-30px",
-                  width: "200px",
-                  height: "90px",
-                  transform: "translateX(-50%)",
-                }}
-                initial={{ opacity: 0, scale: 0.5 }}
+                className="w-44 h-44 md:w-56 md:h-56 rounded-full overflow-hidden border border-border mb-8"
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-              />
-
-              {/* Thought words */}
-              {thoughts.map((t, i) => (
-                <motion.span
-                  key={i}
-                  className="absolute text-foreground/80 text-[11px] md:text-sm font-body italic whitespace-nowrap z-10 font-medium"
-                  style={{
-                    left: `calc(50% + ${t.x}px)`,
-                    top: `${t.y}px`,
-                  }}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{
-                    opacity: 0.85,
-                    y: [0, -3, 0],
-                  }}
-                  transition={{
-                    opacity: { delay: t.delay, duration: 0.4 },
-                    y: {
-                      delay: t.delay + 0.4,
-                      duration: 2.5 + i * 0.3,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      ease: "easeInOut",
-                    },
-                  }}
-                >
-                  {t.label}
-                </motion.span>
-              ))}
-
-              {/* Connector dots */}
-              <motion.div
-                className="absolute w-1.5 h-1.5 rounded-full bg-foreground/10 z-10"
-                style={{ left: "50%", top: "-8px", transform: "translateX(-50%)" }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              />
-              <motion.div
-                className="absolute w-1 h-1 rounded-full bg-foreground/8 z-10"
-                style={{ left: "calc(50% + 5px)", top: "-2px" }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.55 }}
-              />
-
-              {/* Circle avatar */}
-              <motion.div
-                className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-2 border-border bg-background"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 200 }}
+                transition={{ delay: 0.3, duration: 0.6, type: "spring", stiffness: 200 }}
               >
                 <img
                   src={cindyAvatar}
-                  alt="Cindy — notion style avatar"
-                  className="w-full h-full object-cover object-top scale-125"
+                  alt="Cindy"
+                  className="w-full h-full object-cover object-top scale-[1.3]"
                 />
               </motion.div>
-            </div>
 
-            {/* Enter button */}
-            <motion.button
-              onClick={() => setEntered(true)}
-              className="bg-foreground text-background px-7 py-2.5 rounded-full font-body font-medium text-sm tracking-wide hover:opacity-80 transition-opacity cursor-pointer"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 2.2, duration: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              enter world →
-            </motion.button>
+              {/* Journal scribbles — appear after title */}
+              {titleDone && (
+                <div className="space-y-1.5 text-center">
+                  {journalLines.map((line, i) => (
+                    <motion.p
+                      key={i}
+                      className="text-sm md:text-base font-handwriting text-muted-foreground"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 0.7, x: 0 }}
+                      transition={{ delay: i * 0.5, duration: 0.4 }}
+                    >
+                      {line}
+                    </motion.p>
+                  ))}
+                </div>
+              )}
+
+              {/* Enter button */}
+              <AnimatePresence>
+                {showButton && (
+                  <motion.button
+                    onClick={() => setEntered(true)}
+                    className="mt-10 font-handwriting text-lg text-foreground border-b border-foreground/30 pb-0.5 hover:border-foreground/60 transition-colors cursor-pointer"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    turn the page →
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.div>
         ) : (
           <motion.div
@@ -191,7 +219,7 @@ const LandingPage = () => {
               {["about", "projects", "thoughts"].map((item) => (
                 <span
                   key={item}
-                  className="border border-border text-foreground px-5 py-2 rounded-full font-body text-sm"
+                  className="border border-border text-foreground px-5 py-2 rounded-full font-body text-sm cursor-pointer hover:bg-secondary transition-colors"
                 >
                   {item}
                 </span>
