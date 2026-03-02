@@ -64,6 +64,8 @@ export default {
           nyc: "hsl(var(--bubble-nyc))",
           harvard: "hsl(var(--bubble-harvard))",
         },
+        sky: "hsl(var(--sky))",
+        rose: "hsl(var(--rose))",
       },
       borderRadius: {
         lg: "var(--radius)",
